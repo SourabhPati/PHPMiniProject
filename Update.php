@@ -1,4 +1,8 @@
 <?php
+session_start();
+    if(!isset($_SESSION['username'])){
+        header('location: hod_login.php');
+    }
 // Include config file
 require_once 'config.php';
  
