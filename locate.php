@@ -86,6 +86,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	}
 	catch(PDOException $e){
 		echo "Could not locate the teacher due to internal error";
+        $err = "Teacher with ID :- $Teacher_ID is not resgistered";
 	}
 	}
 }
