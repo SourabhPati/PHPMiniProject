@@ -72,8 +72,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             try{
             if($stmt->execute()){
                 // Records created successfully. Redirect to landing page
-              //  header("location: index.php");
-              //  exit();
+              //header("location: index.php");
+              //exit();
             }
             }
             catch(PDOException $e)
@@ -94,7 +94,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $fri = explode(' ',$_POST['FRI']);
 
     $count=substr_count(implode(" ",$mon),"Free")+substr_count(implode(" ",$tue),"Free")+substr_count(implode(" ",$wed),"Free")+substr_count(implode(" ",$thur),"Free")+substr_count(implode(" ",$fri),"Free");
-      $sql5 = "UPDATE teacher SET Free_Periods = $count WHERE Teacher_ID = $Teacher_ID";    // to be changed to insert
+      $sql5 = "UPDATE `teacher` SET Free_Periods = $count WHERE Teacher_ID = $Teacher_ID";
       $pdo->query($sql5);
 
     $sql2 = "CREATE TABLE `school`.`$Teacher_ID` ( `DAY` TEXT NOT NULL , `Period 1` TEXT NOT NULL , `Period 2` TEXT NOT NULL , `Period 3` TEXT NOT NULL , `Period 4` TEXT NOT NULL , `Period 5` TEXT NOT NULL , `Period 6` TEXT NOT NULL , `Period 7` TEXT NOT NULL , `Period 8` TEXT NOT NULL) ENGINE = InnoDB;";

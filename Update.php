@@ -36,32 +36,32 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     }
     
     // Validate Free_PeriodS
-    $input_freeP = trim($_POST["Free_Periods"]);
+    /*$input_freeP = trim($_POST["Free_Periods"]);
     if(empty($input_freeP)){
         $FreeP_err = "Please enter the number of free periods per week.";     
     } elseif(!ctype_digit($input_freeP)){
         $FreeP_err = 'Please enter a positive integer value.';
     } else{
         $Free_Periods = $input_freeP;
-    }
+    }*/
     
     // Check input errors before inserting in database
-    if(empty($name_err) && empty($subject_err) && empty($FreeP_err)){
+    if(empty($name_err) && empty($subject_err) && empty($ID_err)){
         // Prepare an insert statement
-        $sql = "UPDATE teacher SET Name=:name,Subject=:Subject,Free_Periods=:Free_Periods WHERE Teacher_ID = :Teacher_ID;";
+        $sql = "UPDATE teacher SET Name=:name,Subject=:Subject WHERE Teacher_ID = :Teacher_ID;";
  
         if($stmt = $pdo->prepare($sql)){
             // Bind variables to the prepared statement as parameters
             $stmt->bindParam(':Teacher_ID', $param_TeacherID);
             $stmt->bindParam(':name', $param_name);
             $stmt->bindParam(':Subject', $param_Subject);
-            $stmt->bindParam(':Free_Periods', $param_Free_Periods);
+            //$stmt->bindParam(':Free_Periods', $param_Free_Periods);
             
             // Set parameters
             $param_TeacherID = $Teacher_ID;
             $param_name = $name;
             $param_Subject = $Subject;
-            $param_Free_Periods = $Free_Periods;
+            //$param_Free_Periods = $Free_Periods;
             
             // Attempt to execute the prepared statement
                       // Attempt to execute the prepared statement
@@ -83,6 +83,11 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     $wed = explode(' ',$_POST['WED']);
     $thu = explode(' ',$_POST['thu']);
     $fri = explode(' ',$_POST['FRI']);
+
+
+    $count=substr_count(implode(" ",$mon),"Free")+substr_count(implode(" ",$tue),"Free")+substr_count(implode(" ",$wed),"Free")+substr_count(implode(" ",$thu),"Free")+substr_count(implode(" ",$fri),"Free");
+      $sql5 = "UPDATE `teacher` SET Free_Periods = $count WHERE Teacher_ID = $Teacher_ID";
+      $pdo->query($sql5);
 
 
     $SQLdelete = "DROP TABLE `school`.`$Teacher_ID`;";
@@ -191,11 +196,11 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                             <textarea name="Subject" class="form-control"><?php echo $Subject; ?></textarea>
                             <span class="help-block"><?php echo $subject_err;?></span>
                         </div>
-                        <div class="form-group <?php echo (!empty($FreeP_err)) ? 'has-error' : ''; ?>">
+                        <!--<div class="form-group <?php echo (!empty($FreeP_err)) ? 'has-error' : ''; ?>">
                             <label>Free Periods</label>
                             <input type="text" name="Free_Periods" class="form-control" value="<?php echo $Free_Periods; ?>">
                             <span class="help-block"><?php echo $FreeP_err;?></span>
-                        </div>
+                        </div>-->
                         <!--Input aid msgs to be added -->
                         <div class = "form-group">
                             <label>DAY-1 (MON)</label>
