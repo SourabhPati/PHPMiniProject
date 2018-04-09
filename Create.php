@@ -1,7 +1,10 @@
 <?php
 // Include config file
 require_once 'config.php';
-
+if(!preg_match("/main/index.html",$referrer));
+    {
+        header('Location: hod_login.php');
+    };
 // Define variables and initialize with empty values
 $Teacher_ID = $Name = $Subject = $Free_Periods = "";
 $name_err = $FreeP_err = $subject_err = $ID_err = "";
@@ -72,8 +75,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             try{
             if($stmt->execute()){
                 // Records created successfully. Redirect to landing page
-              //header("location: index.php");
-              //exit();
+              //  header("location: index.php");
+              //  exit();
             }
             }
             catch(PDOException $e)
@@ -93,23 +96,47 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $thur = explode(' ',$_POST['THU']);
     $fri = explode(' ',$_POST['FRI']);
 
-    $count=substr_count(implode(" ",$mon),"Free")+substr_count(implode(" ",$tue),"Free")+substr_count(implode(" ",$wed),"Free")+substr_count(implode(" ",$thur),"Free")+substr_count(implode(" ",$fri),"Free");
-      $sql5 = "UPDATE `teacher` SET Free_Periods = $count WHERE Teacher_ID = $Teacher_ID";
-      $pdo->query($sql5);
+    $invalid='';
 
+    $count=substr_count(implode(" ",$mon),"Free")+substr_count(implode(" ",$tue),"Free")+substr_count(implode(" ",$wed),"Free")+substr_count(implode(" ",$thur),"Free")+substr_count(implode(" ",$fri),"Free");
+      $sql5 = "UPDATE teacher SET Free_Periods = $count WHERE Teacher_ID = $Teacher_ID";    // to be changed to insert
+      $pdo->query($sql5);
+   
     $sql2 = "CREATE TABLE `school`.`$Teacher_ID` ( `DAY` TEXT NOT NULL , `Period 1` TEXT NOT NULL , `Period 2` TEXT NOT NULL , `Period 3` TEXT NOT NULL , `Period 4` TEXT NOT NULL , `Period 5` TEXT NOT NULL , `Period 6` TEXT NOT NULL , `Period 7` TEXT NOT NULL , `Period 8` TEXT NOT NULL) ENGINE = InnoDB;";
     $pdo->query($sql2);
+      if(str_word_count(implode(" ",$mon))==9)
+    {    
+        $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\"%s\")",implode("\",\"",$mon));
+         $pdo->query($sqlINS);
+     }
+     else
+        $invalid = "Invalid number of Periods";
+   
+    if(str_word_count(implode(" ",$tue))==9)
+    {
 
-    $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\"%s\")",implode("\",\"",$mon));
-     $pdo->query($sqlINS);
-      $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\"%s\")",implode("\",\"",$tue));
-     $pdo->query($sqlINS);
-      $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\" %s\")",implode("\",\"",$wed));
-     $pdo->query($sqlINS);
-      $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\"  %s\")",implode("\",\"",$thur));
-     $pdo->query($sqlINS);
-      $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\" %s\")",implode("\",\"",$fri));
-     $pdo->query($sqlINS);
+        $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\"%s\")",implode("\",\"",$tue));
+        $pdo->query($sqlINS);
+    }
+    else
+        $
+
+    if(str_word_count(implode(" ",$wed))==9)
+    {
+        $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\" %s\")",implode("\",\"",$wed));
+        $pdo->query($sqlINS);
+    }
+
+    if(str_word_count(implode(" ",$thur))==9)
+    {   $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\"  %s\")",implode("\",\"",$thur));
+        $pdo->query($sqlINS);
+    }
+
+    if(str_word_count(implode(" ",$fri))==9)
+    {
+            $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\" %s\")",implode("\",\"",$fri));
+            $pdo->query($sqlINS);
+    }
      header("location: index-pdo-format.php");
      exit();
 
@@ -165,22 +192,34 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <div class = "form-group">
                             <label>DAY-1 (MON)</label>
                             <input type="text" name="MON" class="form-control">
+                            <?php
+                            echo "Invalid number of periods";?>
                         </div>
+
                         <div class = "form-group">
                             <label>DAY-2 (TUE)</label>
                             <input type="text" name="TUE" class="form-control">
+                            <?php
+                            echo "Invalid number of periods";?>
                         </div>
+
                         <div class = "form-group">
                             <label>DAY-3 (WED)</label>
                             <input type="text" name="WED" class="form-control">
                         </div>
+
                         <div class = "form-group">
                             <label>DAY-4 (THU)</label>
                             <input type="text" name="THU" class="form-control">
+                            <?php
+                            echo "Invalid number of periods";?>
                         </div>
+
                         <div class = "form-group">
                             <label>DAY-5 (FRI)</label>
                             <input type="text" name="FRI" class="form-control">
+                            <?php
+                            echo "Invalid number of periods";?>
                         </div>
                         <br>
                         <input type="submit" class="btn btn-primary" value="Submit">
