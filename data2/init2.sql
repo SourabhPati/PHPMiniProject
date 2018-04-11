@@ -6,3 +6,4 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL
 );
+INSERT INTO `users`(`id`, `username`, `email`, `password`) VALUES (1, "admin", "DBadmin@xyz.com", "admin");
