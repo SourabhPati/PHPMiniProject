@@ -96,7 +96,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             // Attempt to execute the prepared statement
             try{
-            $stmt->execute()
+            $stmt->execute();
             }
             catch(PDOException $e)
             {
