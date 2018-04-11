@@ -105,13 +105,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
 
         // Close statement
-        unset($stmt);
-
-
-
-  
-
-    
+        unset($stmt);  
 
    
       $sql5 = "UPDATE teacher SET Free_Periods = $count WHERE Teacher_ID = $Teacher_ID";    // to be changed to insert
@@ -138,11 +132,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\" %s\")",implode("\",\"",$fri));
             $pdo->query($sqlINS);
 
-     header("location: index-pdo-format.php");
-     exit();
+    unset($pdo);
+    header("location: index-pdo-format.php");
+    exit();
 
     // Close connection
-    unset($pdo);
+    
 }
 }
 ?>

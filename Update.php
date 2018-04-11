@@ -9,6 +9,8 @@ require_once 'config.php';
 // Define variables and initialize with empty values
 $Teacher_ID = $Name = $Subject = $Free_Periods = "";
 $name_err = $FreeP_err = $subject_err = $ID_err = "";
+$invalid1 = $invalid2 = $invalid3 = $invalid4 = $invalid5 = "";
+$syntax = "MON 506 608 Free 405 405 801 Free Free";
  
 // Processing form data when form is submitted
 if(isset($_POST["id"]) && !empty($_POST["id"])){
@@ -38,19 +40,45 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     } else{
         $Subject = $input_subject;
     }
-    
-    // Validate Free_PeriodS
-    /*$input_freeP = trim($_POST["Free_Periods"]);
-    if(empty($input_freeP)){
-        $FreeP_err = "Please enter the number of free periods per week.";     
-    } elseif(!ctype_digit($input_freeP)){
-        $FreeP_err = 'Please enter a positive integer value.';
-    } else{
-        $Free_Periods = $input_freeP;
-    }*/
+   // echo $_POST['THU'];
+    $mon = explode(' ',$_POST['MON']);
+    $tue = explode(' ',$_POST['TUE']);
+    $wed = explode(' ',$_POST['WED']);
+    $thur = explode(' ',$_POST['THU']);
+    $fri = explode(' ',$_POST['FRI']);
+
+
+    $count=substr_count(implode(" ",$mon),"Free")+substr_count(implode(" ",$tue),"Free")+substr_count(implode(" ",$wed),"Free")+substr_count(implode(" ",$thur),"Free")+substr_count(implode(" ",$fri),"Free");
+
+
+    if(substr_count(implode(" ",$mon)," ")!=8)
+    {
+        $invalid1 = "You must enter time table for exactly 8 hall numbers for 8 periods";
+    }
+
+    if(substr_count(implode(" ",$tue)," ")!=8)
+    {
+        $invalid2 = "You must enter time table for exactly 8 hall numbers for 8 periods";
+    }
+
+    if(substr_count(implode(" ",$wed)," ")!=8)
+    {
+        $invalid3 = "You must enter time table for exactly 8 hall numbers for 8 periods";
+    }
+
+   if(substr_count(implode(" ",$thur)," ")!=8)
+    {
+        $invalid4 = "You must enter time table for exactly 8 hall numbers for 8 periods";
+    }
+
+   if(substr_count(implode(" ",$fri)," ")!=8)
+    {
+        $invalid5 = "You must enter time table for exactly 8 hall numbers for 8 periods";
+    }
+
     
     // Check input errors before inserting in database
-    if(empty($name_err) && empty($subject_err) && empty($ID_err)){
+    if(empty($name_err) && empty($subject_err) && empty($ID_err) && empty($invalid1) && empty($invalid2)&& empty($invalid3) && empty($invalid4) && empty($invalid5)){
         // Prepare an insert statement
         $sql = "UPDATE teacher SET Name=:name,Subject=:Subject WHERE Teacher_ID = :Teacher_ID;";
  
@@ -82,14 +110,6 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     }
     
 
-    $mon = explode(' ',$_POST['MON']);
-    $tue = explode(' ',$_POST['TUE']);
-    $wed = explode(' ',$_POST['WED']);
-    $thu = explode(' ',$_POST['thu']);
-    $fri = explode(' ',$_POST['FRI']);
-
-
-    $count=substr_count(implode(" ",$mon),"Free")+substr_count(implode(" ",$tue),"Free")+substr_count(implode(" ",$wed),"Free")+substr_count(implode(" ",$thu),"Free")+substr_count(implode(" ",$fri),"Free");
       $sql5 = "UPDATE `teacher` SET Free_Periods = $count WHERE Teacher_ID = $Teacher_ID";
       $pdo->query($sql5);
 
@@ -108,16 +128,16 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
      $pdo->query($sqlINS);
       $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\"  %s\")",implode("\",\"",$thu));
      $pdo->query($sqlINS);
-      $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\" %s\")",implode("\",\"",$fri));
+     $sqlINS = sprintf("INSERT INTO `school`.`$Teacher_ID` (`DAY`, `Period 1`, `Period 2`, `Period 3`, `Period 4`, `Period 5`, `Period 6`, `Period 7`, `Period 8`) VALUES(\" %s\")",implode("\",\"",$fri));
      $pdo->query($sqlINS);
-        // Close statement
-        unset($stmt);
-    }
-    header("location: index-pdo-format.php");
+     unset($stmt);
+     unset($pdo);
+     header("location: index-pdo-format.php");
     exit();
+        // Close statement
+    }
     // Close connection
-    unset($pdo);
-} else{
+}else{
     // Check existence of id parameter before processing further
     if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
         // Get URL parameter
@@ -141,8 +161,8 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                     // Retrieve individual field value
                     $ID = $row["Teacher_ID"];
                     $name = $row["Name"];
-                  //  $Subject = $row["Subject"];
-                  //  $Free_Periods = $row["Free_Periods"];
+                    //$Subject = $row["Subject"];
+                    //$Free_Periods = $row["Free_Periods"];
                 } else{
                     // URL doesn't contain valid id. Redirect to error page
                     header("location: error.php");
@@ -188,7 +208,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                     <div class="page-header">
                         <h2>Update Details for Teacher with ID <?php echo $_GET['id']; ?></h2>
                     </div>
-                    <p>Please edit the input values and submit to update the record.</p>
+                    <p>Please edit the input values and submit to update the teacher details.</p>
                     <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
                         <div class="form-group <?php echo (!empty($name_err)) ? 'has-error' : ''; ?>">
                             <label>Name</label>
@@ -200,31 +220,41 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                             <textarea name="Subject" class="form-control"><?php echo $Subject; ?></textarea>
                             <span class="help-block"><?php echo $subject_err;?></span>
                         </div>
-                        <!--<div class="form-group <?php echo (!empty($FreeP_err)) ? 'has-error' : ''; ?>">
-                            <label>Free Periods</label>
-                            <input type="text" name="Free_Periods" class="form-control" value="<?php echo $Free_Periods; ?>">
-                            <span class="help-block"><?php echo $FreeP_err;?></span>
-                        </div>-->
-                        <!--Input aid msgs to be added -->
-                        <div class = "form-group">
+
+                        <div>
+                            <br>
+                            <p><u><b>A SAMPLE FOR ENTERING THE BELOW TIME TABLE (Monday) : <br><br></b></u><?php echo $syntax; ?></p>
+                            <br>
+                        </div>
+                        <div class = "form-group <?php echo (!empty($invalid1)) ? 'has-error' : ''; ?>">
                             <label>DAY-1 (MON)</label>
                             <input type="text" name="MON" class="form-control">
-                        </div>
-                        <div class = "form-group">
+                            <span class="help-block"><?php echo $invalid1;?></span>
+                            </div>
+
+                        <div class = "form-group <?php echo (!empty($invalid2)) ? 'has-error' : ''; ?>">
                             <label>DAY-2 (TUE)</label>
                             <input type="text" name="TUE" class="form-control">
+                          <span class="help-block"><?php echo $invalid2;?></span>  
+
                         </div>
-                        <div class = "form-group">
+
+                        <div class = "form-group <?php echo (!empty($invalid3)) ? 'has-error' : ''; ?>">
                             <label>DAY-3 (WED)</label>
                             <input type="text" name="WED" class="form-control">
+                             <span class="help-block"><?php echo  $invalid3;?></span>
                         </div>
-                        <div class = "form-group">
+
+                        <div class = "form-group <?php echo (!empty($invalid4)) ? 'has-error' : ''; ?>">
                             <label>DAY-4 (THU)</label>
-                            <input type="text" name="thu" class="form-control">
+                            <input type="text" name="THU" class="form-control">
+                            <span class="help-block"><?php echo $invalid4;?></span>
                         </div>
-                        <div class = "form-group">
+
+                        <div class = "form-group <?php echo (!empty($invalid5)) ? 'has-error' : ''; ?>">
                             <label>DAY-5 (FRI)</label>
                             <input type="text" name="FRI" class="form-control">
+                           <span class="help-block"><?php  echo $invalid5;?></span>
                         </div>
                         <input type="hidden" name="id" value="<?php echo $id; ?>"/>
                         <input type="submit" class="btn btn-primary" value="Submit">
