@@ -77,19 +77,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     {
         $invalid5 = "You must enter time table for exactly 8 hall numbers for 8 periods";
     }
-  /*)  else if(substr_count(implode(" ",$mon))<9 || substr_count(implode(" ",$tue))<9 || substr_count(implode(" ",$wed))<9 || substr_count(implode(" ",$thur))<9 || substr_count(implode(" ",$fri))<9)
-    {
-        $invalid = "You must enter time table for exactly 8 hall numbers for 8 periods";
-    }
-    // Validate Free_PeriodS
-    /*$input_freeP = trim($_POST["Free_Periods"]);
-    if(empty($input_freeP)){
-        $FreeP_err = "Please enter the number of free periods per week.";
-    } elseif(!ctype_digit($input_freeP)){
-        $FreeP_err = 'Please enter a positive integer value.';
-    } else{
-        $Free_Periods = $input_freeP;
-    }*/
 
     // Check input errors before inserting in database
     if(empty($name_err) && empty($subject_err) && empty($ID_err) && empty($invalid1) && empty($invalid2)&& empty($invalid3) && empty($invalid4) && empty($invalid5)){
@@ -101,21 +88,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $stmt->bindParam(':Teacher_ID', $param_TeacherID);
             $stmt->bindParam(':name', $param_name);
             $stmt->bindParam(':Subject', $param_Subject);
-          //  $stmt->bindParam(':Free_Periods', $param_Free_Periods);
 
             // Set parameters
             $param_TeacherID = $Teacher_ID;
             $param_name = $name;
             $param_Subject = $Subject;
-            //$param_Free_Periods = $Free_Periods;
 
             // Attempt to execute the prepared statement
             try{
-            if($stmt->execute()){
-                // Records created successfully. Redirect to landing page
-              //  header("location: index.php");
-              //  exit();
-            }
+            $stmt->execute()
             }
             catch(PDOException $e)
             {
@@ -209,11 +190,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <p><u><b>A SAMPLE FOR ENTERING THE BELOW TIME TABLE (Monday) : <br><br></b></u><?php echo $syntax; ?></p>
                             <br>
                         </div>
-                      <!--  <div class="form-group <?php echo (!empty($FreeP_err)) ? 'has-error' : ''; ?>">
-                            <label>Free Periods</label>
-                            <input type="text" name="Free_Periods" class="form-control" value="<?php echo $Free_Periods; ?>">
-                            <span class="help-block"><?php echo $FreeP_err;?></span>
-                        </div>-->
                         <div class = "form-group <?php echo (!empty($invalid1)) ? 'has-error' : ''; ?>">
                             <label>DAY-1 (MON)</label>
                             <input type="text" name="MON" class="form-control">
